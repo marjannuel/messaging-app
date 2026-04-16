@@ -1,11 +1,9 @@
 'use client';
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import { AccountCheck } from '@/app/actions';
 
 export default function Login(){
-  const router = useRouter();
   const [authentication, setAuthentication] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -16,10 +14,7 @@ export default function Login(){
     const formData = new FormData(e.currentTarget);
     const result = await AccountCheck(formData);
 
-    if (result?.success){
-      router.push('/home')
-    }
-    else{
+    if (!result?.success){
       setAuthentication(false)
       setErrorMessage(result?.message)
     }

@@ -1,36 +1,42 @@
 'use server';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
 export async function AccountCheck(formData){
-    const email = formData.get('email');
-    const password = formData.get('password');
 
-    const { data, error} = await supabase.auth.signInWithPassword({
-        email,
-        password
+    const supabase = await createClient()
+
+    const { data : authData, error : authError} = await supabase.auth.signInWithPassword({
+        email : formData.get('email'),
+        password : formData.get('password')
     });
 
-    if (error){
-        return {success: false, message: error.message}
+    if (authError){
+        return {success: false, message: authError.message}
     }
 
-    return {success: true, message: ""}
+    const { data : profile } = await supabase.from('profiles').select('username').eq('id', authData.user.id).single()
+
+    if (!profile?.username){
+        redirect('/setup')
+    }
+    
+    else{
+        redirect('/home')
+    }
 };
 
 export async function RegisterAccount(formData){
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const supabase = await createClient()
 
     const { data, error} = await supabase.auth.signUp({
-        email,
-        password
+        email : formData.get('email'),
+        password : formData.get('password')
     });
 
     if (error){
         return {success: false, message: error.message}
     }
 
-    else{
-        return {success: true, message: "Account Created"}
-    }
+    return {success: true, message: "Account Created"}
 };
