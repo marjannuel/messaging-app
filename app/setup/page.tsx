@@ -4,7 +4,7 @@ export default function SetupAccount(){
 
     return(
         <div className="min-h-dvh w-full overflow-x-hidden flex justify-center">
-            <div className="max-w-191.75 w-full bg-neutral-800 text-white flex flex-col h-dvh">
+            <div className="max-w-191.75 w-full bg-neutral-800 text-white flex flex-col min-h-dvh">
                 <div className="flex flex-col items-center gap-1 mt-2 px-2">
                     <h1 className="font-bold text-3xl">Setup Account</h1>
                     <h2>Some information are required, and the others can be configured later</h2>
