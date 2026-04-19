@@ -78,6 +78,10 @@ export async function SetupAccount(formData) {
         publicUrl = urlData.publicUrl;
     }
 
+    if (publicUrl === null){
+        publicUrl = 'https://api.dicebear.com/7.x/bottts/svg?seed=' + Math.random()
+    }
+
     // 3. Upsert Profile Data (Now including the avatar_url)
     const { error } = await supabase
         .from('profiles')
@@ -101,17 +105,15 @@ export async function SetupAccount(formData) {
     return redirect('/home');
 }
 
-export async function ProfilePicture() {
+export async function GetUserProfile() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) return 'https://api.dicebear.com/7.x/bottts/svg';
-
-    const { data: pfp } = await supabase
-            .from('profiles')
-            .select('avatar_url')
-            .eq('id', user.id)
-            .single()
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('avatar_url, first_name, last_name')
+        .eq('id', user.id)
+        .single()
         
-    return pfp?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg'
+    return profile
 }
