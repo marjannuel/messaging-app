@@ -123,7 +123,7 @@ export async function GetAllUsers(searchterm){
 
     const { data: profile } = await supabase
         .from('profiles')
-        .select('id, first_name, last_name')
+        .select('id, avatar_url, first_name, last_name')
         .or(`first_name.ilike.%${searchterm}%, last_name.ilike.%${searchterm}%`)
         .order('first_name, last_name', { ascending: true })
         .limit(20)

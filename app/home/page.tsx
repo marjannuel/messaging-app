@@ -37,7 +37,7 @@ export default function Home(){
     return(
         <div className="min-h-dvh w-full overflow-x-hidden flex justify-center">
             <div className="max-w-191.75 w-full bg-neutral-800 text-white flex flex-col min-h-dvh">
-                <div className="flex items-center justify-start px-2 py-2 w-full gap-5 border-b bg-neutral-950">
+                <div className="flex items-center justify-start px-2 py-2 w-full gap-2 border-b bg-neutral-950">
                     <div className="border-2 w-12 h-12 rounded-full overflow-hidden">
                         <img src={avatar} className="w-full h-full object-cover" alt="Profile Picture"></img>
                     </div>
@@ -53,19 +53,23 @@ export default function Home(){
                         type="text"
                         placeholder="Chat with..."
                         value={query}
+                        autoComplete="off"
                         onChange={(e) => {
                             setQuery(e.target.value)
                         }}>
 
                         </input>
                         {nameFound && nameFound.length > 0 && (
-                            <ul>
+                            <ul className="mt-1">
                                 {nameFound.map((name) => (
                                 <li 
-                                className="p-2 hover:bg-blue-100 cursor-pointer"
+                                className="flex items-center gap-2 p-2 hover:bg-neutral-600 cursor-pointer"
                                 onClick={() => setQuery(`${name.first_name} ${name.last_name}`)}
                                 key={name.id}>
-                                    {name.first_name} {name.last_name}
+                                    <div className="border-2 w-12 h-12 rounded-full overflow-hidden">
+                                        <img src={name.avatar_url} className="w-full h-full object-cover" alt="Profile Picture"></img>
+                                    </div>
+                                    <span>{name.first_name} {name.last_name}</span>
                                 </li>
                                 ))}
                             </ul>
