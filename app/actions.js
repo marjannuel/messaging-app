@@ -100,3 +100,18 @@ export async function SetupAccount(formData) {
     // 4. Success!
     return redirect('/home');
 }
+
+export async function ProfilePicture() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return 'https://api.dicebear.com/7.x/bottts/svg';
+
+    const { data: pfp } = await supabase
+            .from('profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single()
+        
+    return pfp?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg'
+}
