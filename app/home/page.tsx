@@ -3,7 +3,7 @@
 export default function Home(){
     return(
         <div className="min-h-dvh w-full overflow-x-hidden flex justify-center">
-            <div className="max-w-191.75 w-full bg-neutral-800 text-white flex flex-col h-dvh">
+            <div className="max-w-191.75 w-full bg-neutral-800 text-white flex flex-col min-h-dvh">
                 <div className="flex items-center justify-start px-2 py-1 w-full gap-5 border-b bg-neutral-950">
                     <p>Profile Pic</p>
                     <p>Logo</p>
