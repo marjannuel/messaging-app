@@ -1,11 +1,13 @@
 'use client'
-import { GetUserProfile } from "@/app/actions"
+import { GetUserProfile, GetAllUsers} from "@/app/actions"
 import { useState, useEffect } from "react"
 
 export default function Home(){
     const [avatar, setAvatar] = useState('https://api.dicebear.com/7.x/bottts/svg?=')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [query, setQuery] = useState('')
+    const [nameFound, setNameFound] = useState<any[]>()
 
     useEffect(() => {
         async function fetchProfile(){
@@ -17,6 +19,20 @@ export default function Home(){
         }
         fetchProfile()
     }, [])
+
+    useEffect(() => {
+        const triggerSearch = async () => {
+            if (!query.trim()) {
+                setNameFound([]);
+                return;
+            }
+
+            const nameList = await GetAllUsers(query);
+            setNameFound(nameList || []);
+        };
+
+        triggerSearch();
+    }, [query]);
 
     return(
         <div className="min-h-dvh w-full overflow-x-hidden flex justify-center">
@@ -31,12 +47,30 @@ export default function Home(){
                     </p>
                 </div>
                 <main className="flex grow items-start px-2 w-full">
-                    <input className="w-full mx-2 px-2 border-2 py-1 mt-2 rounded-2xl focus:border-yellow-500 focus:outline-0 hover:border-green-500 bg-neutral-700"
-                    name="search"
-                    type="text"
-                    placeholder="Chat with...">
+                    <div className="flex flex-col w-full">
+                        <input className="w-full px-2 border-2 py-1 mt-2 rounded-2xl focus:border-yellow-500 focus:outline-0 hover:border-green-500 bg-neutral-700"
+                        name="search"
+                        type="text"
+                        placeholder="Chat with..."
+                        value={query}
+                        onChange={(e) => {
+                            setQuery(e.target.value)
+                        }}>
 
-                    </input>
+                        </input>
+                        {nameFound && nameFound.length > 0 && (
+                            <ul>
+                                {nameFound.map((name) => (
+                                <li 
+                                className="p-2 hover:bg-blue-100 cursor-pointer"
+                                onClick={() => setQuery(`${name.first_name} ${name.last_name}`)}
+                                key={name.id}>
+                                    {name.first_name} {name.last_name}
+                                </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
                 </main>
                 <div className=" flex items-center justify-evenly px-2 w-full border-t bg-neutral-950">
                     <p className="border-r py-1 w-full text-center">Message</p>
