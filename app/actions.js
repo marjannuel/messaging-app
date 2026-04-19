@@ -41,31 +41,62 @@ export async function RegisterAccount(formData){
     return {success: true, message: "Account Created"}
 };
 
-export async function SetupAccount(formData){
-    const supabase = await createClient()
+export async function SetupAccount(formData) {
+    const supabase = await createClient();
 
-    const { data, error : noUser } = await supabase.auth.getUser()
+    // 1. Verify Authentication
+    const { data: userData, error: noUser } = await supabase.auth.getUser();
 
-    if(noUser){
-        return redirect('/')
+    if (noUser || !userData.user) {
+        return redirect('/');
     }
 
+    const userId = userData.user.id;
+    const file = formData.get('profile_picture'); // Matches the 'name' attribute in your input tag
+    let publicUrl = null;
+
+    // 2. Handle File Upload (If a file exists and has a name)
+    if (file && file.size > 0) {
+        // We create a unique filename using the User ID and timestamp
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, file);
+
+        if (uploadError) {
+            return { success: false, message: "Image upload failed: " + uploadError.message };
+        }
+
+        // Get the public URL for the database
+        const { data: urlData } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
+        
+        publicUrl = urlData.publicUrl;
+    }
+
+    // 3. Upsert Profile Data (Now including the avatar_url)
     const { error } = await supabase
-    .from('profiles')
-    .upsert({
-        id: data.user.id,
-        username: formData.get('username'),
-        first_name: formData.get('first_name'),
-        last_name: formData.get('last_name'),
-        phone_number: formData.get('phone_number'),
-        birthdate: formData.get('birthdate'),
-        sex: formData.get('sex')
-    })
+        .from('profiles')
+        .upsert({
+            id: userId,
+            username: formData.get('username'),
+            first_name: formData.get('first_name'),
+            last_name: formData.get('last_name'),
+            phone_number: formData.get('phone_number'),
+            birthdate: formData.get('birthdate'),
+            sex: formData.get('sex'),
+            avatar_url: publicUrl, // Storing the link, not the file!
+            updated_at: new Date().toISOString(),
+        });
 
-    if(error){
-        return {success: false, message: error.message}
+    if (error) {
+        return { success: false, message: error.message };
     }
-    else{
-        return redirect('/home')
-    }
+
+    // 4. Success!
+    return redirect('/home');
 }

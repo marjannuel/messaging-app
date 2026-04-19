@@ -22,7 +22,7 @@ export default function Setup(){
     }
 
     const handleCircleClick = () => {
-    fileInputRef.current?.click();
+        fileInputRef.current?.click();
     };
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +59,6 @@ export default function Setup(){
                         )}
                     </div>
 
-                    {/* The Hidden Functional Input */}
                     <input
                         type="file"
                         name="profile_picture"
