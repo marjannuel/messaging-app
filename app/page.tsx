@@ -27,14 +27,14 @@ export default function Login(){
           <form className="flex flex-col gap-1 justify-center items-center w-full"
           onSubmit={handleLogin}
           method="POST">
-            <input className="border-2 border-white rounded-2xl py-1 px-2 bg-neutral-700 focus:outline-none focus:border-yellow-500 w-55 hover:border-green-500"
+            <input className="border-2 border-neutral-600 rounded-2xl py-1 px-2 bg-neutral-700 focus:outline-none focus:border-yellow-500 w-55 hover:border-green-500"
             name="email"
             type='email'
             required
             placeholder="Email">
           
             </input>
-            <input className="border-2 border-white rounded-2xl py-1 px-2 bg-neutral-700 focus:outline-none focus:border-yellow-500 w-55 hover:border-green-500"
+            <input className="border-2 border-neutral-600 rounded-2xl py-1 px-2 bg-neutral-700 focus:outline-none focus:border-yellow-500 w-55 hover:border-green-500"
             name="password"
             type="password"
             required
